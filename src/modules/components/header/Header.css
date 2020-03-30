@@ -1,0 +1,7 @@
+.home-page {
+  position: relative;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: auto; 
+  background-color: black 
+}

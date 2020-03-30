@@ -1,0 +1,15 @@
+.min-100 {
+    min-height: 100%;
+}
+
+.verticalline {
+    border-left: 2px solid teal;
+    margin: 10px 0px 10px 0px;
+    height: 400px;
+}
+
+
+.horizontalline {
+    border: 2px solid teal;
+    border-radius: 2px;
+  }

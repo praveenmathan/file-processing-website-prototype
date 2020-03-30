@@ -1,0 +1,9 @@
+body {
+    background-color: lightgrey;
+    padding: 20px;
+    margin: 0;
+    height: 100%;
+  }
+  h1, h2, p, ul, li {
+    font-family: sans-serif;
+  }
