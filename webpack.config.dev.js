@@ -57,6 +57,7 @@ let iAuditRendering = {
         }),
         new webpack.DefinePlugin({
             'process.env.HOST': JSON.stringify("DEV-HOST"),
+            'process.env.SAMPLE_API': JSON.stringify("http://jsonplaceholder.typicode.com/users"),
         }),
     ],
     optimization: {

@@ -3,9 +3,15 @@ import './HomePage.css';
 import Piechart from '../visualization/PieChart';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import APIClient from '../services/APIClient';
+import logger from '../../Logger';
 
 class HomePage extends React.Component {
-    componentDidMount () {}
+    componentDidMount () {
+        // TODO: This is a sample GET using axios
+        // Need to replace with original API calls
+        console.log('List', APIClient.query(process.env.SAMPLE_API));
+    }
 
     // Sample data - TODO this has to be retrived via service.
     fileStatus = {
@@ -33,7 +39,8 @@ class HomePage extends React.Component {
     }
 
     render () {
-        console.log('Home page', process.env.HOST);
+        console.log('Home page', process.env.HOST, process.env.SAMPLE_API);
+        logger.info("This", "meta");
         return (
             <React.Fragment>
                 <div className="container-fluid">
