@@ -9,9 +9,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write \"src/**/*.js\"",
     "eslint-fix": "eslint --fix \"src/**/*.js\"",
-    "start": "webpack-dev-server --open --mode development",
-    "build": "webpack -p --mode production",
-    "deploy": "aws s3 sync --profile niketestuser dist/ s3://my-superawesome-website"
+    "start": "webpack-dev-server --open --mode development --config webpack.config.dev.js",
+    "build": "webpack --mode production --config webpack.config.js",
+    "deploy:development": "aws s3 sync --profile development dist/ s3://iaudit-development",
+    "deploy:production": "aws s3 sync --profile production dist/ s3://iaudit-production"
   },
   "keywords": [],
   "author": "",

@@ -33,7 +33,7 @@ class HomePage extends React.Component {
     }
 
     render () {
-        console.log('Home page');
+        console.log('Home page', process.env.HOST);
         return (
             <React.Fragment>
                 <div className="container-fluid">

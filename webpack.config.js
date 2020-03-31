@@ -5,8 +5,7 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 const path = require('path');
 const isProduction = true;
 let iAuditRendering = {  
-  name: "iAudit",
-  mode: 'production',
+  name: "iAudit", 
   devtool: (() => {
     if (isProduction) {
       return 'hidden-source-map';
@@ -23,6 +22,11 @@ let iAuditRendering = {
     filename: "[name].[hash].js",
     chunkFilename: "[name].[hash].js",
     publicPath: "/",
+  },
+  devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    compress: true,
+    port: 9000
   },
   module: {
     rules: [
@@ -50,7 +54,11 @@ let iAuditRendering = {
     new webpack.LoaderOptionsPlugin({
       minimize: isProduction,
       debug: !isProduction
-    }),
+    }), 
+    // Specify the environment variables
+    new webpack.DefinePlugin({
+      'process.env.HOST': JSON.stringify("PROD-HOST"),
+    }),   
   ],
   optimization: {
     nodeEnv: 'production',
