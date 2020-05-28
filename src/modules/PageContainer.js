@@ -1,14 +1,12 @@
 import * as React from 'react';
 import Routes from './Routes';
-import ErrorBoundary from './ErrorBoundary';
 
+/* eslint-disable */
 class PageContainer extends React.Component {
-    render () {
+    render() {
         return (
             <React.Fragment>
-                <ErrorBoundary>
-                    <Routes />
-                </ErrorBoundary>
+                <Routes />
             </React.Fragment>
         );
     }

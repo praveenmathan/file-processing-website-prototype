@@ -1,4 +1,5 @@
 // log level definitions
+/* eslint-disable */
 const LOG_LEVEL = {
     DEBUG: { level: 1, levelValue: "debug" },
     INFO: { level: 2, levelValue: "info" },
@@ -7,22 +8,22 @@ const LOG_LEVEL = {
 };
 
 class Logger {
-    info (message, meta) {
+    info(message, meta) {
         this.log(message, LOG_LEVEL.INFO, meta);
     }
-    error (message, meta) {
+    error(message, meta) {
         this.log(message, LOG_LEVEL.ERROR, meta);
     }
-    debug (message, meta) {
+    debug(message, meta) {
         this.log(message, LOG_LEVEL.DEBUG, meta);
     }
-    warn (message, meta) {
+    warn(message, meta) {
         this.log(message, LOG_LEVEL.WARN, meta);
     }
-    log (message, logLevel, meta) {
-    // tslint:disable-next-line
-    // There is no server-side logging.
-    // Only client side logging is applicable.
+    log(message, logLevel, meta) {
+        // tslint:disable-next-line
+        // There is no server-side logging.
+        // Only client side logging is applicable.
         console.log(message, meta);
     }
 }

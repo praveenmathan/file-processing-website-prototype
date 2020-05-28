@@ -1,8 +1,9 @@
 import * as React from 'react';
 
+/* eslint-disable */
 class Footer extends React.Component {
-    render () {
-    // FIX FOR - Lazy loading working only when user scroll down till the footer in mobile[SPD-2999]
+    render() {
+        // FIX FOR - Lazy loading working only when user scroll down till the footer in mobile[SPD-2999]
         return (
             <div id="footer">
                 <div className="bg-dark">

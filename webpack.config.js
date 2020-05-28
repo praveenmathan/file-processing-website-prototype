@@ -4,8 +4,8 @@ const webpack = require('webpack');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const path = require('path');
 const isProduction = true;
-let iAuditRendering = {  
-  name: "iAudit", 
+let iAuditRendering = {
+  name: "iAudit",
   devtool: (() => {
     if (isProduction) {
       return 'hidden-source-map';
@@ -13,7 +13,7 @@ let iAuditRendering = {
     return 'inline-source-map';
   })(),
   entry: {
-    bundle: [      
+    bundle: [
       "./src/index.js"
     ],
   },
@@ -33,8 +33,8 @@ let iAuditRendering = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: ["babel-loader","eslint-loader"]
-        
+        use: ["babel-loader", "eslint-loader"]
+
       },
       {
         test: /\.html$/,
@@ -42,7 +42,7 @@ let iAuditRendering = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader","css-loader"]
+        use: ["style-loader", "css-loader"]
       }
     ]
   },
@@ -54,11 +54,11 @@ let iAuditRendering = {
     new webpack.LoaderOptionsPlugin({
       minimize: isProduction,
       debug: !isProduction
-    }), 
+    }),
     // Specify the environment variables
     new webpack.DefinePlugin({
       'process.env.HOST': JSON.stringify("PROD-HOST"),
-    }),   
+    }),
   ],
   optimization: {
     nodeEnv: 'production',

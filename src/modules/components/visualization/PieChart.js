@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as d3 from "d3";
-
+/* eslint-disable */
 class Piechart extends React.Component {
-    constructor (props) {
+    constructor(props) {
         super();
         this.ref = React.createRef();
         this.createPie = d3.pie().value((d) => (d.value));
@@ -12,7 +12,7 @@ class Piechart extends React.Component {
         this.format = d3.format(".2f");
     }
 
-    componentDidMount () {
+    componentDidMount() {
         const svg = d3.select(this.ref.current)
             .style("margin-left", 20)
             .style("margin-top", 20);
@@ -52,7 +52,7 @@ class Piechart extends React.Component {
             .text(d => (d.data.label));
     }
 
-    render () {
+    render() {
         return <svg ref={this.ref} />;
     }
 }
