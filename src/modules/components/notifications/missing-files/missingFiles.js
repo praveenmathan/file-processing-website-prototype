@@ -8,10 +8,12 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import { Checkbox } from '@material-ui/core';
+import { Checkbox, Button } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import APIClient from '../APIClient';
+import SnackBarUtility from '../../utility/snackBarUtility';
 
 /* eslint-disable */
 const columns = [
@@ -57,10 +59,11 @@ const useStyles = makeStyles({
     },
     tableHeadBackground: {
         background: '#bdbdbd',
-        fontWeight: "bold"
+        fontWeight: "bold",
+        justifyContent: "space-between"
     },
     titleChecked: {
-        flex: '1 1 100%',
+        flex: '1 1 50%',
         color: '#ddd'
     },
     title: {
@@ -69,14 +72,22 @@ const useStyles = makeStyles({
     },
     appBarBackground: {
         background: '#212121',
+    },
+    customBoxShadow: {
+        flex: '1 1 100%',
+        boxShadow: '0px 8px 9px -5px rgba(0,0,0,0.1), 0px 10px 25px 2px rgba(0,0,0,0.10), 0px 6px 28px 5px rgba(0,0,0,0.1)',
+        padding: '5px 10px',
+        fontWeight: 'bold'
     }
 });
 
-export default function HeldCorruptedSkippedFiles(props) {
+export default function MissingFiles() {
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [selected, setSelected] = React.useState([]);
+    const [snackbar, setSnackBar] = React.useState({});
+    const [snackBarOpen, setSnackBarOpen] = React.useState(false);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -112,22 +123,49 @@ export default function HeldCorruptedSkippedFiles(props) {
                 selected.slice(selectedIndex + 1),
             );
         }
-
         setSelected(newSelected);
     };
+
+    const handleNotifyVendor = () => {
+        setSnackBarOpen(false);
+        APIClient.getData().then((response) => {
+            if (response.status === 200) {
+                console.log(response);
+                setSnackBarOpen(true);
+                setSnackBar({
+                    message: 'Notified the vendor',
+                    severity: 'success'
+                });
+            }
+        }).catch((error) => {
+            setSnackBarOpen(true);
+            setSnackBar({
+                message: 'Error while loading the data. Contact Support',
+                severity: 'error'
+            });
+            console.log(error);
+        });
+    }
 
     const isSelected = (name) => selected.indexOf(name) !== -1;
 
     return (
         <Fragment>
+            {snackBarOpen ? <SnackBarUtility snackBar={snackbar} /> : null}
             <AppBar position="static" className={classes.appBarBackground}>
                 <Toolbar>
                     <Typography variant="h6" className={classes.title}>
-                        Held / Corrupted Files
+                        Missing Files
                     </Typography>
-                    {selected.length > 0 ? <Typography variant="subtitle2" className={classes.titleChecked}>
-                        {selected.length} selected
-                    </Typography> : ''}
+                    {selected.length > 0 ?
+                        <Fragment>
+                            <Typography variant="subtitle2" className={classes.titleChecked}>
+                                {selected.length} selected
+                    </Typography>
+                            <Button variant="contained" color="primary" className={classes.customBoxShadow} onClick=
+                                {handleNotifyVendor}>Notify Vendor</Button>
+                        </Fragment>
+                        : ''}
                 </Toolbar>
             </AppBar>
             <Paper className={classes.root} elevation={5}>

@@ -12,20 +12,16 @@ export default {
     getData: () =>
         instance({
             'method': 'GET',
-            'url': '/Test-new/transactionLambdaFunction/basic-transaction',
+            'url': '/beta/transactionLambdaFunction/basic-transaction',
             'params': {
-                'transactionId': '34',
-                'type': 'secret',
-                'amount': '500'
-            },
+                q: 'notification'
+            }
         }),
     postData: () =>
         instance({
             'method': 'POST',
-            'url': '/api',
+            'url': '/beta/transactionLambdaFunction/basic-transaction',
             'data': {
-                'item1': 'data1',
-                'item2': 'item2'
             },
             'headers': {
                 'content-type': 'application/json'  // override instance defaults

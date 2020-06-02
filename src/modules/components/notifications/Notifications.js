@@ -1,47 +1,52 @@
-import React, { Fragment } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import PosSlaMisses from './POS-SLA-Miss/posSlaMiss';
-import MissingFiles from './MISSINGFILES/missingFiles';
-import LongRunningSkippedFiles from './LONGRUNNINGSKIPPEDFILES/longRunningSkippedFiles';
-import HeldCorruptedSkippedFiles from './HELDCORRUPTEDFILES/heldCorruptedSkippedFiles';
+import React, { Fragment, useEffect } from 'react';
+import PosSlaMisses from './pos-sla-missed-files/posSlaMiss';
+import MissingFiles from './missing-files/missingFiles';
+import LongRunningSkippedFiles from './long-running-skipped-files/longRunningSkippedFiles';
+import HeldCorruptedSkippedFiles from './held-corrupted-files/heldCorruptedSkippedFiles';
+import APIClient from '../notifications/APIClient';
+import NotificationSkeleton from '../utility/notificationSkeleton';
+import SnackBarUtility from '../utility/snackBarUtility';
+
 
 /* eslint-disable */
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-    },
-    menuButton: {
-        marginRight: theme.spacing(2),
-    },
-    title: {
-        flexGrow: 1,
-    },
-    appBarBackground: {
-        background: '#212121',
-    }
-}));
-
 export default function Notifications() {
-    const classes = useStyles();
+
+    //create state variables
+    const [tabularResponseData, setTabularResponseData] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
+    const [snackbar, setSnackBar] = React.useState({});
+    const [snackBarOpen, setSnackBarOpen] = React.useState(false);
+
+    //create fetch data function from API
+    useEffect(() => {
+        setLoading(true);
+        APIClient.getData().then((response) => {
+            if (response.status === 200) {
+                let tabularResponseData = [...response.data];
+                setTabularResponseData(tabularResponseData);
+                setLoading(false);
+            }
+        }).catch((error) => {
+            setSnackBarOpen(true);
+            setSnackBar({
+                message: 'Error while loading the data. Contact Support',
+                severity: 'error'
+            });
+            console.log(error);
+        });
+    }, []);
+
     return (
         <Fragment>
+            {snackBarOpen ? <SnackBarUtility snackBar={snackbar} /> : null}
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-md-6">
-                        <AppBar position="static" className={classes.appBarBackground}>
-                            <Toolbar>
-                                <Typography variant="h6" className={classes.title}>
-                                    POS SLA Misses
-                                </Typography>
-                            </Toolbar>
-                        </AppBar>
-                        <PosSlaMisses />
+                        {loading ?
+                            <NotificationSkeleton /> : <PosSlaMisses posResponseData={tabularResponseData} />}
                     </div>
                     <div className="col-md-6">
-                        <MissingFiles />
+                        {loading ? <NotificationSkeleton /> : <MissingFiles />}
                     </div>
                 </div>
             </div>
@@ -49,17 +54,10 @@ export default function Notifications() {
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-md-6">
-                        <AppBar position="static" className={classes.appBarBackground}>
-                            <Toolbar>
-                                <Typography variant="h6" className={classes.title}>
-                                    Long Running / skipped
-                                </Typography>
-                            </Toolbar>
-                        </AppBar>
-                        <LongRunningSkippedFiles />
+                        {loading ? <NotificationSkeleton /> : <LongRunningSkippedFiles longRunSkipResponseData={tabularResponseData} />}
                     </div>
                     <div className="col-md-6">
-                        <HeldCorruptedSkippedFiles />
+                        {loading ? <NotificationSkeleton /> : <HeldCorruptedSkippedFiles />}
                     </div>
                 </div>
             </div>

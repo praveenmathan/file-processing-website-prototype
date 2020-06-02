@@ -8,44 +8,21 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import { Checkbox } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
 /* eslint-disable */
 const columns = [
-    { id: 'name', label: 'File Name', minWidth: 170 },
-    { id: 'code', label: 'S3\u00a0Arrival\u00a0Time', minWidth: 100 },
+    { id: 'fileName', label: 'File Name', minWidth: 170 },
+    { id: 's3ArrivalTime', label: 'S3\u00a0Arrival\u00a0Time', minWidth: 100 },
     {
-        id: 'population',
+        id: 'status',
         label: 'Status',
         minWidth: 170,
         align: 'left',
         format: (value) => value.toLocaleString('en-US'),
     }
-];
-
-function createData(name, code, population) {
-    return { name, code, population };
-}
-
-const rows = [
-    createData('India', 'IN', 1324171354),
-    createData('China', 'CN', 1403500365),
-    createData('Italy', 'IT', 60483973),
-    createData('United States', 'US', 327167434),
-    createData('Canada', 'CA', 37602103),
-    createData('Australia', 'AU', 25475400),
-    createData('Germany', 'DE', 83019200),
-    createData('Ireland', 'IE', 4857000),
-    createData('Mexico', 'MX', 126577691),
-    createData('Japan', 'JP', 126317000),
-    createData('France', 'FR', 67022000),
-    createData('United Kingdom', 'GB', 67545757),
-    createData('Russia', 'RU', 146793744),
-    createData('Nigeria', 'NG', 200962417),
-    createData('Brazil', 'BR', 210147127),
 ];
 
 const useStyles = makeStyles({
@@ -57,27 +34,22 @@ const useStyles = makeStyles({
     },
     tableHeadBackground: {
         background: '#bdbdbd',
-        fontWeight: "bold",
-        justifyContent: "space-between"
-    },
-    titleChecked: {
-        flex: '1 1 100%',
-        color: '#ddd'
+        fontWeight: "bold"
     },
     title: {
-        flex: '1 1 100%',
-        flexGrow: '1'
+        flexGrow: 1,
     },
     appBarBackground: {
         background: '#212121',
     }
 });
 
-export default function MissingFiles() {
+export default function PosSlaMisses(props) {
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [selected, setSelected] = React.useState([]);
+
+    const rows = [...props.posResponseData];
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -88,47 +60,13 @@ export default function MissingFiles() {
         setPage(0);
     };
 
-    const handleSelectAllClick = (event) => {
-        if (event.target.checked) {
-            const newSelecteds = rows.map((n) => n.name);
-            setSelected(newSelecteds);
-            return;
-        }
-        setSelected([]);
-    };
-
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-
-        setSelected(newSelected);
-    };
-
-    const isSelected = (name) => selected.indexOf(name) !== -1;
-
     return (
         <Fragment>
             <AppBar position="static" className={classes.appBarBackground}>
                 <Toolbar>
                     <Typography variant="h6" className={classes.title}>
-                        Missing Files
-                    </Typography>
-                    {selected.length > 0 ? <Typography variant="subtitle2" className={classes.titleChecked}>
-                        {selected.length} selected
-                    </Typography> : ''}
+                        POS SLA Misses
+                                </Typography>
                 </Toolbar>
             </AppBar>
             <Paper className={classes.root} elevation={5}>
@@ -136,15 +74,6 @@ export default function MissingFiles() {
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
-                                <TableCell padding="checkbox"
-                                    className={classes.tableHeadBackground}>
-                                    <Checkbox
-                                        indeterminate={selected.length > 0 && selected.length < rows.length}
-                                        checked={rows.length > 0 && selected.length === rows.length}
-                                        onChange={handleSelectAllClick}
-                                        inputProps={{ 'aria-label': 'select all desserts' }}
-                                    />
-                                </TableCell>
                                 {columns.map((column) => (
                                     <TableCell
                                         key={column.id}
@@ -159,14 +88,8 @@ export default function MissingFiles() {
                         </TableHead>
                         <TableBody>
                             {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                                const isItemSelected = isSelected(row.name);
                                 return (
-                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.code} onClick={(event) => handleClick(event, row.name)}>
-                                        <TableCell padding="checkbox">
-                                            <Checkbox
-                                                checked={isItemSelected}
-                                            />
-                                        </TableCell>
+                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.fileName}>
                                         {columns.map((column) => {
                                             const value = row[column.id];
                                             return (

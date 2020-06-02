@@ -1,17 +1,21 @@
 import * as React from 'react';
+import FileSearch from './file-search/fileSearch';
 
 /* eslint-disable */
-class FileStatus extends React.Component {
-    componentDidMount() { }
-    render() {
-        console.log('File Status');
-        return (
-            <React.Fragment>
-                <div className="Home-page p-0 bg-white d-flex flex-column justify-content-center wrapper">
-                    File Status Page
+export default function FileStatus() {
+    return (
+        <div className="container-fluid">
+            <div className="row">
+                <div className="col-md-12">
+                    <FileSearch />
                 </div>
-            </React.Fragment>
-        );
-    }
+            </div>
+            <div className="divider"></div>
+            <div className="row">
+                <div className="col-md-12">
+                    {/*<FileChart />*/}
+                </div>
+            </div>
+        </div>
+    )
 }
-export default FileStatus;

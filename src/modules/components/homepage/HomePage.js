@@ -5,39 +5,15 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
-import { withStyles } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import Snackbar from '@material-ui/core/Snackbar';
-import { Alert } from '@material-ui/lab';
-import APIClient from '../services/APIClient';
+import APIClient from '../homepage/APIClient';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import SnackBarUtility from '../utility/snackBarUtility';
 
 /* eslint-disable */
-
-const data = [
-    { name: 'Group A', value: 400 },
-    { name: 'Group B', value: 300 },
-    { name: 'Group C', value: 300 },
-    { name: 'Group D', value: 200 },
-];
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-const StyledButton = withStyles({
-    root: {
-        borderRadius: 3,
-        border: 0,
-        color: 'white',
-        height: 48,
-        padding: '0 30px',
-        background: 'linear-gradient(45deg, #2196f3 30%, #21cbf3 90%)',
-        boxShadow: '0 3px 15px 2px rgba(33, 203, 243, 0.5)',
-    },
-    label: {
-        textTransform: 'capitalize',
-    },
-})(Button);
-
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
 const useStyles = makeStyles((theme) => ({
     formControl: {
         margin: theme.spacing(1),
@@ -46,6 +22,11 @@ const useStyles = makeStyles((theme) => ({
     selectEmpty: {
         marginTop: theme.spacing(2),
     },
+    customBoxShadow: {
+        boxShadow: '0px 8px 9px -5px rgba(0,0,0,0.1), 0px 10px 25px 2px rgba(0,0,0,0.10), 0px 6px 28px 5px rgba(0,0,0,0.1)',
+        padding: '15px 25px',
+        fontWeight: 'bold'
+    }
 }));
 
 export default function HomePage() {
@@ -53,8 +34,11 @@ export default function HomePage() {
 
     // Create state variables
     const [age, setAge] = React.useState('');
-    const [open, setOpen] = React.useState(false);
-    const [responseData, setResponseData] = React.useState('');
+    const [responseData, setResponseData] = React.useState([]);
+    const [snackbar, setSnackBar] = React.useState({});
+    const fileStatus = {
+        data: []
+    };
 
     // fetches data
     const fetchData = () => {
@@ -62,22 +46,22 @@ export default function HomePage() {
         APIClient.getData()
             .then((response) => {
                 if (response.status === 200) {
-                    setOpen(true);
-                    setResponseData(response.data);
-                    console.log(response);
+                    console.log('response from lambda', response.data);
+                    setSnackBar({
+                        message: 'Data successfully loaded to chart',
+                        severity: 'success'
+                    });
+                    setResponseData([...response.data]);
                 }
             })
             .catch((error) => {
-                console.log(error)
+                setSnackBar({
+                    message: 'Error while loading the data. Contact Support',
+                    severity: 'error'
+                });
+                console.log(error);
             })
     }
-
-    const handleClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setOpen(false);
-    };
 
     const handleChange = (event, child) => {
         if (event.target.value != null) {
@@ -87,28 +71,12 @@ export default function HomePage() {
     };
 
     // Sample data - TODO this has to be retrived via service.
-    const fileStatus = {
-        data: [
-            { name: 'sla miss', value: 50, label: '50%' },
-            { name: 'sla met', value: 30, label: '30%' },
-            { name: 'sla miss', value: 20, label: '20%' }
-        ],
-        width: 400,
-        height: 300,
-        innerRadius: 60,
-        outerRadius: 100
-    }
-
     const POSSLA = {
         data: [
-            { name: 'POS miss', value: 70, label: '70%' },
-            { name: 'POS miss', value: 28, label: '28%' },
-            { name: 'POS miss', value: 2, label: '2%' }
-        ],
-        width: 400,
-        height: 300,
-        innerRadius: 60,
-        outerRadius: 100
+            { name: 'POS miss', value: 80, label: '70%' },
+            { name: 'POS met', value: 9, label: '30%' },
+            { name: 'POS miss', value: 11, label: '20%' }
+        ]
     }
 
     const RADIAN = Math.PI / 180;
@@ -118,6 +86,7 @@ export default function HomePage() {
         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
         const x = cx + radius * Math.cos(-midAngle * RADIAN);
         const y = cy + radius * Math.sin(-midAngle * RADIAN);
+        console.log('percent', percent);
 
         return (
             <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
@@ -127,11 +96,7 @@ export default function HomePage() {
     };
     return (
         <React.Fragment>
-            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="success">
-                    Data loaded successfully
-                </Alert>
-            </Snackbar>
+            {responseData.length != 0 ? <SnackBarUtility snackBar={snackbar} /> : null}
 
             <div className="container-fluid">
                 <div className="row">
@@ -149,7 +114,7 @@ export default function HomePage() {
                                 <MenuItem value={20}>Volkswagon Automobile service</MenuItem>
                                 <MenuItem value={30}>Lantrasoft solutions</MenuItem>
                             </Select>
-                            <FormHelperText>Placeholder</FormHelperText>
+                            <FormHelperText>Select a vendor to view chart</FormHelperText>
                         </FormControl>
                     </div>
                 </div>
@@ -162,7 +127,7 @@ export default function HomePage() {
                         <ResponsiveContainer width="100%" height={400}>
                             <PieChart height={400}>
                                 <Pie
-                                    data={fileStatus.data}
+                                    data={POSSLA.data}
                                     innerRadius={60}
                                     outerRadius={150}
                                     fill="#8884d8"
@@ -172,7 +137,7 @@ export default function HomePage() {
                                     label={renderCustomizedLabel}
                                 >
                                     {
-                                        data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
+                                        POSSLA.data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
                                     }
                                 </Pie>
                                 <Legend verticalAlign="bottom" height={36} />
@@ -195,7 +160,7 @@ export default function HomePage() {
                                     label={renderCustomizedLabel}
                                 >
                                     {
-                                        data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
+                                        POSSLA.data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
                                     }
                                 </Pie>
                                 <Legend verticalAlign="bottom" height={36} />
@@ -212,7 +177,7 @@ export default function HomePage() {
                         <ResponsiveContainer width="100%" height={400}>
                             <PieChart height={400}>
                                 <Pie
-                                    data={fileStatus.data}
+                                    data={POSSLA.data}
                                     innerRadius={60}
                                     outerRadius={150}
                                     fill="#8884d8"
@@ -222,7 +187,7 @@ export default function HomePage() {
                                     label={renderCustomizedLabel}
                                 >
                                     {
-                                        data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
+                                        POSSLA.data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
                                     }
                                 </Pie>
                                 <Legend verticalAlign="bottom" height={36} />
@@ -244,7 +209,7 @@ export default function HomePage() {
                                     <option>INF_IN01_RLTR_SALES_315692_D_2020021</option>
                                 </Form.Control>
                             </Form.Group>
-                            <StyledButton onClick={e => fetchData(e)}>Reprocess</StyledButton>
+                            <Button variant="contained" color="primary" className={classes.customBoxShadow} onClick={e => fetchData(e)}>Test code</Button>
                         </Form>
                     </div>
                 </div>
